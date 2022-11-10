@@ -53,14 +53,14 @@ public class Panel extends JPanel implements ActionListener,ChangeListener{
 		
 		
 		// start button
-		startButton = new Button("Start",(int)(smallPanel.getSize().width/2)-120-30, 30, 120, 50,Color.PINK);
+		startButton = new Button("START",(int)(smallPanel.getSize().width/2)-120-30, 30, 120, 50,Color.PINK);
 		smallPanel.add(startButton);
 		startButton.addActionListener(this);
 		
 		
 		
 		// remaze button
-		reMazeButton = new Button("Re-Maze",(int)(smallPanel.getSize().width/2)+30, 30, 120, 50,Color.CYAN);
+		reMazeButton = new Button("RE-MAZE",(int)(smallPanel.getSize().width/2)+30, 30, 120, 50,Color.CYAN);
 		smallPanel.add(reMazeButton);
 		reMazeButton.addActionListener(this);
 		reMazeButton.setEnabled(false);
@@ -88,7 +88,7 @@ public class Panel extends JPanel implements ActionListener,ChangeListener{
 		
 		
 		// Bang lua chon speed
-		speedSlider = new JSlider(1,5, 5);
+		speedSlider = new JSlider(1,5,5);
 		speedSlider.setBounds((windowW - mazeSize)/2 - 175, 230, 350, 40); 
 		speedSlider.setPaintTrack(true);
 		speedSlider.setMajorTickSpacing(1);
@@ -126,7 +126,7 @@ public class Panel extends JPanel implements ActionListener,ChangeListener{
 		smallPanel.add(algoBox);
 		
 		// Start
-		startSolvingButton = new Button("START",smallPanel.getSize().width/2-130-20, 300, 130, 60,new Color(255, 231, 122));
+		startSolvingButton = new Button("START FINDING",smallPanel.getSize().width/2-130-20, 300, 130, 60,new Color(255, 231, 122));
 		smallPanel.add(startSolvingButton);
 		startSolvingButton.addActionListener(this);
 		startSolvingButton.setEnabled(false);
@@ -137,7 +137,6 @@ public class Panel extends JPanel implements ActionListener,ChangeListener{
 		resetButton.addActionListener(this);
 		
 		initMaze();
-		timer.start();
 	}
 	
 	
