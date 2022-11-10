@@ -18,14 +18,8 @@ import javax.swing.event.ChangeListener;
 public class Panel extends JPanel implements ActionListener,ChangeListener{
 	
 	private final int mazeSize = 600;
-	private int cellSize = 40;
-	private int slowestDelay = 110;
-	private int delay = 10;
 	private int windowW,windowH;
-	private int running = -1;
-	private int switchCaseVar = 0;	
 	private Maze maze;
-	private Timer tm;
 	private JPanel smallPanel;
 	private Button startButton;
 	private Button resetButton;
@@ -35,12 +29,6 @@ public class Panel extends JPanel implements ActionListener,ChangeListener{
 	private JLabel speedLabel;
 	private JSlider speedSlider;	
 	private JCheckBox mazeCheckbox;
-	private JCheckBox BFSCheckbox;
-	private JComboBox algoBox;
-	private int mode ;
-	private JLabel algoBoxLabel;
-	private Button startSolvingButton;
-	private boolean flag = true;
 
 	public Panel(int windowW,int windowH){
 		this.windowW = windowW;
