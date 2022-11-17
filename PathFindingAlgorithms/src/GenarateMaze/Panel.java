@@ -1,25 +1,23 @@
 package GenarateMaze;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Timer;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class Panel extends JPanel implements ActionListener,ChangeListener{
 	
 	private final int mazeSize = 600;
+	private int cellSize = 40;
+	private int slowestDelay = 100;
+	private int delay = 10;
 	private int windowW,windowH;
+	private int running = -1;
+	private int switchCaseVar = 0;	
 	private Maze maze;
+	private Timer timer;
 	private JPanel smallPanel;
 	private Button startButton;
 	private Button resetButton;
@@ -29,22 +27,25 @@ public class Panel extends JPanel implements ActionListener,ChangeListener{
 	private JLabel speedLabel;
 	private JSlider speedSlider;	
 	private JCheckBox mazeCheckbox;
-	private JLabel algoBoxLabel;
+	private JCheckBox BFSCheckbox;
 	private JComboBox algoBox;
-	private int mode;
+	private int mode ;
+	private JLabel algoBoxLabel;
 	private Button startSolvingButton;
-	private Timer timer;
+	private boolean flag = true;
 
+	
 	public Panel(int windowW,int windowH){
 		this.windowW = windowW;
-		this.windowH = windowH;		
+		this.windowH = windowH;
+		
+		timer = new Timer(delay, this);
 		this.setPreferredSize(new Dimension(windowW,windowH));
 		this.setBounds(0, 0, windowW, windowH);
 		this.setBackground(new Color(250,250,250));
 		this.setLayout(null);
 		
-		
-		// create table
+		// create table on the right
 		smallPanel = new JPanel();
 		smallPanel.setPreferredSize(new Dimension((windowW-mazeSize),windowH));
 		smallPanel.setBounds(mazeSize, 0, windowW-mazeSize, windowH);
@@ -72,7 +73,7 @@ public class Panel extends JPanel implements ActionListener,ChangeListener{
 		cellSlider = new JSlider(10,100,40);
 		cellSlider.setBounds((windowW-mazeSize)/2-(350/2), 150, 350, 50);
 		cellSlider.setPaintTicks(true);
-		cellSlider.setMinorTickSpacing(10);
+		cellSlider.setMinorTickSpacing(5);
 		cellSlider.setPaintTrack(true);
 		cellSlider.setMajorTickSpacing(10);
 		cellSlider.setSnapToTicks(true);
@@ -137,23 +138,119 @@ public class Panel extends JPanel implements ActionListener,ChangeListener{
 		resetButton.addActionListener(this);
 		
 		initMaze();
+		timer.start();
 	}
 	
 	
 	private void initMaze() {
-		maze = new Maze();
+		maze = new Maze(mazeSize,cellSize);	
 	}
-	
+
+	public void paintComponent(Graphics g) {
+		
+		if(maze.checkFinished()) {
+			reMazeButton.setEnabled(true);
+			startSolvingButton.setEnabled(true);
+			algoBox.setEnabled(true);
+		}else {
+			startSolvingButton.setEnabled(false);
+			resetButton.setEnabled(false);
+			algoBox.setEnabled(false);
+		}
+		super.paintComponent(g);
+		maze.drawMaze(g);
+		if(!flag) {
+			maze.drawPathFinder(g,mode);
+			if(maze.finish) {
+				mazeCheckbox.setEnabled(true);
+				startSolvingButton.setEnabled(true);
+				resetButton.setEnabled(true);
+				timer.stop();
+			}
+		}
+		
+		if(!mazeCheckbox.isSelected()) {
+			maze.mazeAlgorithm(g);
+		}	
+		else {
+			maze.drawMazeInstantly();
+		}
+	}
+	private void reset() {
+		timer.start();
+		running = -1;	
+		startButton.setEnabled(true);
+		repaint();
+	}
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		// TODO Auto-generated method stub
 		
+		// cellSlider
+		if(e.getSource()==cellSlider) {
+			if(cellSlider.getValue()%5==0) {
+				mazeCheckbox.setEnabled(true);
+				cellLabel.setText("CELL'S SIZE: " + cellSlider.getValue());
+				cellSize = cellSlider.getValue();
+				startButton.setText("START");
+				flag = true;
+				initMaze();
+				reset();
+			}
+		}
+		
+		// speedSlider
+		if(e.getSource()==speedSlider) {
+			speedLabel.setText("SPEED: " + speedSlider.getValue());
+			delay = slowestDelay - (speedSlider.getValue()-1)* ((slowestDelay-10)/4) ;
+			timer.setDelay(delay);
+			System.out.println(delay);
+	}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		
+		// nut reMaze tao Maze moi
+		if(e.getSource()==reMazeButton) {
+			flag = true;
+			mazeCheckbox.setEnabled(true);
+			initMaze();
+			reset();
+			startButton.setText("START");
+		}
+		//  Start Button
+		if (e.getSource()==startButton) {
+			running *= -1;
+			if(running == 1)
+				startButton.setText("PAUSE");
+			else
+				startButton.setText("START");
+		}
+		
+		// algoBox
+		if(e.getSource()==algoBox) {
+			mode = algoBox.getSelectedIndex();
+		}
+		
+		// bat dau tim duong bang thuat toan
+		if(e.getSource() == startSolvingButton) {
+			mazeCheckbox.setSelected(false);
+			mazeCheckbox.setEnabled(false);			
+			if(flag) {
+				maze.initStartAndEnd();
+				flag = false;
+			}
+			
+			
+			// reset Maze
+			if(e.getSource()==resetButton) {
+				flag = true;
+				maze.resetMaze();
+				timer.start();
+			}
+			if(running==1)
+				repaint();
+		}
 	}
 	
 }
