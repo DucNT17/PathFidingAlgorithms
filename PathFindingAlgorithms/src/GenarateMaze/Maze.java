@@ -71,11 +71,11 @@ public class Maze{
 	}
 	
 	public void drawPathFinder(Graphics g,int mode) {
-		if(mode == 0)
-			mazeFinderBFS(g); //Breath 
-		else if(mode == 1)
-			mazeFinderDFS(g); //Depth
-		
+		if(mode == 0) BFS(g); //Breath First Search
+		else if(mode == 1) DFS(g); //Depth First Search
+		else if(mode == 2) DijikstraSearch(g); 
+		else if(mode == 3) AStarSearch(g);
+			
 		for(Cell x: pathsFromAtoB) {
 			x.drawPath(g, Color.pink);
 		}
@@ -138,14 +138,14 @@ public class Maze{
 		}
 	}
 	
-	public void mazeFinderBFS(Graphics g) {
+	public void BFS(Graphics g) {
 
 		next = getOneNeighbor(current);
-		luuVetFromAtoB(current,next);
+		tracedFromAtoB(current,next);
 		if(next == end) {
 			System.out.println("Finished");
 			finish = true;
-			taoPathTuEndToiStart();
+			genaratePathFromEndToStart();
 			return;
 		}
 		
@@ -164,14 +164,14 @@ public class Maze{
 	}
 	
 	
-	public void mazeFinderDFS(Graphics g) {
+	public void DFS(Graphics g) {
 
 		next = getOneNeighbor(current);
-		luuVetFromAtoB(current,next);
+		tracedFromAtoB(current,next);
 		if(next == end) {
 			System.out.println("Finished");
 			finish = true;
-			taoPathTuEndToiStart();
+			genaratePathFromEndToStart();
 			return;
 		}
 		
@@ -190,8 +190,13 @@ public class Maze{
 		}
 	}
 	
-	
-	private void taoPathTuEndToiStart() {
+	public void DijikstraSearch(Graphics g) {
+		
+	}
+	public void AStarSearch(Graphics g) {
+		
+	}
+	private void genaratePathFromEndToStart() {
 		pathsFromAtoB.add(end);
 		Cell tempParent = end.parent;
 		while(tempParent != start) {
@@ -201,7 +206,7 @@ public class Maze{
 	}
 	
 	
-	private void luuVetFromAtoB(Cell A,Cell B) {
+	private void tracedFromAtoB(Cell A,Cell B) {
 		if(B!=null) {
 			B.parent = A;
 		}
